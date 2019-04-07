@@ -54,7 +54,10 @@ contador(0).
 creditosMin(20).
 creditosMax(36).
 
-
+%init(Semestre):-
+%    materiasCursadas(M),
+%    contador(Creditos),
+%    write(Semestre+Creditos+M).
 init(Semestre):-
     contador(X),
     materiasPorCursar([Mat|Col]),
@@ -73,7 +76,7 @@ init(Semestre):-
 
         retract(contador(_)),
         asserta(contador(Creditos)),
-        write(Creditos).
+        init(1).
 
 
    
