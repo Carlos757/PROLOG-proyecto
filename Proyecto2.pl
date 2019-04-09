@@ -110,8 +110,14 @@ init(Semestre):-
         retract(contador(_)),asserta(contador(Creditos)),                       % actualizo el contador de los creditos
         init(Semestre).                                                       % vuelve a repeterce hasta que ya no encuentre materias con el semestre dado
 
-captura(Semestre,[]):-
-    retract(contador2(_)),asserta(contador2(0)). %%Cuando la lista quede vacia se reinicia el contador
+%Correr esto para probarlo
+%captura(1,[diferencial,fundProg,etica,mateDiscretas,tallerAdm]).
+%captura(2,[diferencial,fundProg,contabilidad,quimica,algebra,desarrolloSustentable]).
+%obtenerSem(1,Creditos,Materias).
+
+
+captura(Semestre,[]):-              % Con esta regla se insertan los datos
+    retract(contador2(_)),asserta(contador2(0)).        % Cuando la lista quede vacia se reinicia el contador
 captura(Semestre, [Mat|Col]):-
     contador(X),contador2(Y),
     materiasCursadas(M),
@@ -181,11 +187,11 @@ init3(Semestre, Materias):-
         retract(contador(_)),asserta(contador(Creditos)) ,                     % actualizo el contador de los creditos
         init(Semestre). 
 
-r1(Semestre):-
+r1(Semestre):-          % solo para prueba
     materiasPorCursar(Y),
     recursivo(Semestre,Y).
 
-recursivo(Semestre,[Mat|Col]):-
+recursivo(Semestre,[Mat|Col]):-  % solo para prueba
     (
         (materia(Mat,Semestre,Cred,_),write(Semestre+Mat));
         (materia(Mat,_,Cred,_), recursivo(Semestre, Col))
@@ -231,8 +237,3 @@ pertenece(C, [_|R]) :- pertenece(C,R).
 
 concatenar([],L,L).
 concatenar([X|M],L,[X|Z]):-concatenar(M,L,Z).
-
-a(X):-
-    materiasCursadas(A),
-    member(X,A).
-     
