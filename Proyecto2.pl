@@ -59,32 +59,34 @@ materiasCursadas([]).
 
 s(0,[]).
 
-contador(0).
+contador(0).            % este es el contador de creditos
 contador2(0).
 
 
 creditosMin(20).
 creditosMax(36).
 
+%Regla que recibee como parametro el semestre
 init(Semestre):-
 
-    contador(X),
-    materiasPorCursar([Mat|Col]),
-    materiasCursadas(M),
-    materia(Mat,Semestre,Cred,_),
-    Creditos is X + Cred,  
-    elimina(Mat,[Mat|Col],R),
-    agrega(Mat,M,R1),
+    contador(X),                                % X sera un contador que declare arriba
+    materiasPorCursar([Mat|Col]),               % Mat sera el primer elemento de la lista de materiasPorCursar y Col sera el resto
+    materiasCursadas(M),                        % M seran los elementos que esten guardados en materiasCursadas
+    materia(Mat,Semestre,Cred,_),               % Busco Mat dentro de la base de conocimiento , si existe y si es del semestre que le pase de parametro, guarda sus creditos
+                                                        % en la variable Cred
+    Creditos is X + Cred,                       % Aqui Voy sumando el total de creditos que se van acumulando por cada materia
+    elimina(Mat,[Mat|Col],R),                   % luego elimino Mat de la lista materiasPorCursar y guardo el resultado en R
+    agrega(Mat,M,R1),                           % Agrego la Mat a la lista materiasCursadas y guardo el resultado en R1
         
         %Elimina materia de materias por cursar
-        retract(materiasPorCursar(_)), asserta(materiasPorCursar(R)),
+        retract(materiasPorCursar(_)), asserta(materiasPorCursar(R)),           % aqui simplemente borro la lista materiasPorCursar y le inserto la nueva lista(R) ya sin el elemento
         %inserta materia a materias cursadas
-        retract(materiasCursadas(_)), asserta(materiasCursadas(R1)),
+        retract(materiasCursadas(_)), asserta(materiasCursadas(R1)),            % aqui lo mismo pero con R1
 
-        retract(contador(_)),asserta(contador(Creditos)),
-        init(Semestre).
+        retract(contador(_)),asserta(contador(Creditos)),                       % actualizo el contador de los creditos
+        init(Semestre).                                                         % vuelve a repeterce hasta que ya no encuentre materias con el semestre dado
 
-init2(Semestre,[Cab|Cuer]):-
+init2(Semestre,[Cab|Cuer]):-    %este es un experimento pero hace lo mismo asi que no lo comentare.
     contador(X),
     materia(Cab,_,Cred,_),
     Creditos is X + Cred,  
@@ -103,22 +105,22 @@ init2(Semestre,[Cab|Cuer]):-
     retract(s(_,_)), asserta(s(Creditos,R1)),
     init2(Semestre,Cuer).
 
-resultados(X):-
+resultados(X):- % ignorar esto
     s(C,M),
     write(C+M).
 
    
 
-elimina( Var, [Var|Cuerpo], Cuerpo).
+elimina( Var, [Var|Cuerpo], Cuerpo).                                        % estos son reglas que hicimos en clase para eliminar, agregar una variable de una lista
 elimina( Var, [Var2|Cuerpo], [Var2,Resp]):- elimina(Var,Cuerpo,Resp).
 
 agrega(Var,[],[Var]).
 agrega(Var, Lista,[Var|Lista]).
 
-size([],0).
+size([],0).                                         % te regresa el tamaño de una lista
 size([X|Y], N):-size(Y, N1), N is N1+1.
 
-pertenece(C, [C|_]).
+pertenece(C, [C|_]).                                % te dice si pertenece un elemento a una lista
 pertenece(C, [_|R]) :- pertenece(C,R).
 
      
