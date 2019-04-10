@@ -119,23 +119,23 @@ init(Semestre):-
 captura(Semestre,[]):-              % Con esta regla se insertan los datos
     retract(contador2(_)),asserta(contador2(0)).        % Cuando la lista quede vacia se reinicia el contador
 captura(Semestre, [Mat|Col]):-
-    contador(X),contador2(Y),
-    materiasCursadas(M),
+    contador(X),contador2(Y),                   
+    materiasCursadas(M),        
     obtenerSem(Semestre,C,Materia),
-    verifica(Mat,Semestre,Creditos),
-    Cred is Creditos + X, Cred1 is Creditos + Y,
+    verifica(Mat,Semestre,Creditos),                    % Verifica que la materia exista en la base de conocimiento y sea del semestre correspondiente, y obtengo sus creditos
+    Cred is Creditos + X, Cred1 is Creditos + Y,        % Cred son globales y Cred1 son por semestre
     sumaCred(Cred),sumaCred1(Cred1),
-    agrega(Mat,M,R1), 
-    retract(materiasCursadas(_)),assert(materiasCursadas(R1)),
-    agrega(Mat,Materia,R),
-    remplazar(Semestre,Cred1,R),
+    agrega(Mat,M,R1),                                   % Se agrega la cabeza(materia) a materiasCursadas
+    retract(materiasCursadas(_)),assert(materiasCursadas(R1)),      % Se remplaza por la nueva lista con la materia agregada
+    agrega(Mat,Materia,R),                                  
+    remplazar(Semestre,Cred1,R),                        % Se agregan las materias a su respectivo semestre
 
     captura(Semestre,Col).
 
 verifica(Mat,Semestre,Creditos):-
-    materia(Mat,Semestre,Creditos,_);
-    (retract(materia(Mat,_,Creditos,Seriada)),
-    asserta(materia(Mat,Semestre,Creditos,Seriada))).
+    materia(Mat,Semestre,Creditos,_);           
+    (retract(materia(Mat,_,Creditos,Seriada)),              % Si la materia no corresponde a su semestre, se ajusta  (no optimo)
+    asserta(materia(Mat,Semestre,Creditos,Seriada))).       % !! Falta agregar un contador para contarla como reprobada o algo parecido
 
 sumaCred(Cred):-
    retract(contador(_)),asserta(contador(Cred)).
@@ -197,26 +197,6 @@ recursivo(Semestre,[Mat|Col]):-  % solo para prueba
         (materia(Mat,_,Cred,_), recursivo(Semestre, Col))
     ).
      
-
-init2(Semestre,[Cab|Cuer]):-    %este es un experimento pero hace lo mismo asi que no lo comentare.
-    contador(X),
-    materia(Cab,_,Cred,_),
-    Creditos is X + Cred,  
-    s(C,M),
-    materiasPorCursar(Mat),
-    elimina(Cab,Mat,R),
-    agrega(Cab,M,R1),
-
-    %Elimina materia de materias por cursar
-    retract(materiasPorCursar(_)), asserta(materiasPorCursar(R)),
-    %inserta materia a materias cursadas
-    retract(materiasCursadas(_)), asserta(materiasCursadas(R1)),
-
-    retract(contador(_)),asserta(contador(Creditos)),
-
-    retract(s(_,_)), asserta(s(Creditos,R1)),
-    init2(Semestre,Cuer).
-
 resultados(X):- % ignorar esto
     s(C,M),
     write(C+M).
